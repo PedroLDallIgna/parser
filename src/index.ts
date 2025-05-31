@@ -1,5 +1,12 @@
 import { html, render } from 'lit-html';
-import './styles.css';
+
+// data
+import grammar from './grammar.json';
+
+// styles
+import './index.css';
+
+console.log(grammar);
 
 const root = <HTMLDivElement>document.getElementById('app')!;
 
