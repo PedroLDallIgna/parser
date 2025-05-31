@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "bierner.lit-html",
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ]
+}
