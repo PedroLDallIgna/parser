@@ -11,6 +11,9 @@ import grammar from './grammars/grammar2.json';
 import './index.css';
 import { GrammarSchema } from './types/grammar-schema';
 import { Table } from './components/table';
+import { TableColumn } from './components/table-column';
+import { TableRow } from './components/table-row';
+import { TableCell } from './components/table-cell';
 
 console.log(grammar);
 
@@ -53,7 +56,27 @@ const items = [
 
 const columns = ['id', 'name', 'age'];
 
-const myTable = Table({ items, columns });
+const myTable = Table({
+  rows: [
+    ...actions.map((action) => {
+      return new TableRow({
+        cells: [
+          new TableCell({ value: action.stack.join(' ') }),
+          new TableCell({ value: action.queue.join(' ') }),
+          new TableCell({ value: action.action }),
+        ],
+      });
+    }),
+  ],
+  columns: [
+    new TableColumn({ label: 'Pilha' }),
+    new TableColumn({ label: 'Entrada' }),
+    new TableColumn({ label: 'Ação' }),
+  ],
+  index: true,
+});
+
+// const myTable = Table({ items, columns });
 render(myTable, root);
 
 // render(tokenForm, root);

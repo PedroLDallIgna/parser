@@ -1,31 +1,30 @@
 import { html, TemplateResult } from 'lit-html';
 import { TableRow } from '../table-row';
+import { TableColumn } from '../table-column';
 
 export function Table<T extends Record<string, any>>({
-  items,
+  rows,
   columns,
   onRowClick,
+  index,
 }: {
-  items: T[];
-  columns: string[];
+  rows: TableRow[];
+  columns: TableColumn[];
   onRowClick?: (item: T) => void;
+  index?: boolean;
 }): TemplateResult<1> {
   return html`
     <table class="min-w-full border-collapse">
       <thead>
         <tr>
-          ${columns.map(
-            (column) =>
-              html`<th class="p-2 border-b">${column}</th>`
-          )}
+          ${index &&
+          new TableColumn({ label: '#' }).render()}
+          ${columns.map((column) => column.render())}
         </tr>
       </thead>
       <tbody>
-        ${items.map((item) =>
-          TableRow({
-            item: item,
-            isSelected: false,
-          })
+        ${rows.map((row, rowIndex) =>
+          row.render(rowIndex + 1)
         )}
       </tbody>
     </table>
