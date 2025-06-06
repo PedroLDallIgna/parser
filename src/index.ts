@@ -14,6 +14,7 @@ import { Table } from './components/table';
 import { TableColumn } from './components/table-column';
 import { TableRow } from './components/table-row';
 import { TableCell } from './components/table-cell';
+import { set } from 'lodash';
 
 console.log(grammar);
 
@@ -48,35 +49,41 @@ const actions = process(stack, entryQueue, parsedGrammar);
 
 console.log('Final actions:', actions);
 
-const items = [
-  { id: 1, name: 'Alice', age: 25 },
-  { id: 2, name: 'Bob', age: 30 },
-  { id: 3, name: 'Charlie', age: 35 },
-];
+const myTable = (rows: number) =>
+  new Table({
+    rows: [
+      ...actions
+        .map((action) => {
+          return new TableRow({
+            cells: [
+              new TableCell({
+                value: action.stack.join(' '),
+              }),
+              new TableCell({
+                value: action.queue.join(' '),
+              }),
+              new TableCell({ value: action.action }),
+            ],
+          });
+        })
+        .slice(0, rows),
+    ],
+    columns: [
+      new TableColumn({ label: 'Pilha' }),
+      new TableColumn({ label: 'Entrada' }),
+      new TableColumn({ label: 'Ação' }),
+    ],
+    index: true,
+  });
 
-const columns = ['id', 'name', 'age'];
-
-const myTable = Table({
-  rows: [
-    ...actions.map((action) => {
-      return new TableRow({
-        cells: [
-          new TableCell({ value: action.stack.join(' ') }),
-          new TableCell({ value: action.queue.join(' ') }),
-          new TableCell({ value: action.action }),
-        ],
-      });
-    }),
-  ],
-  columns: [
-    new TableColumn({ label: 'Pilha' }),
-    new TableColumn({ label: 'Entrada' }),
-    new TableColumn({ label: 'Ação' }),
-  ],
-  index: true,
-});
-
-// const myTable = Table({ items, columns });
-render(myTable, root);
+let n = 1;
+const interval = setInterval(() => {
+  if (n <= actions.length) {
+    render(myTable(n), root);
+    n++;
+  } else {
+    clearInterval(interval);
+  }
+}, 1000);
 
 // render(tokenForm, root);
