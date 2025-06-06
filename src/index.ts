@@ -79,7 +79,7 @@ const myTable = (rows: number) =>
 let n = 1;
 const interval = setInterval(() => {
   if (n <= actions.length) {
-    render(myTable(n), root);
+    render(myTable(n).render(), root);
     n++;
   } else {
     clearInterval(interval);
