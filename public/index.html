@@ -5,13 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Parser</title>
 </head>
-<body>
-    <header>
-        <h1 class="text-4xl text-blue-700">Analisador Sintático</h1>
+<body class="bg-gray-100 full-width">
+    <header class="bg-blue-700 text-white py-4">
+        <h1 class="text-4xl text-center">Analisador Sintático</h1>
     </header>
 
-    <div id="app"><div>
+    <!-- <main class="container mx-auto mt-8 md-width-3/4 lg:w-1/2 px-4">
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Entrada de Token</h2>
+            <form class="flex items-center space-x-4">
+                <input
+                    id="input-token"
+                    type="text"
+                    class="border border-gray-300 rounded-md p-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Insira o token/word aqui"
+                />
+                <button
+                    type="button"
+                    class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    Executar
+                </button>
+                <button
+                    type="button"
+                    class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                    Executar Passo a Passo
+                </button>
+            </form>
+        </section>
 
-    <template></template>
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Gramática</h2>
+            <table class="table-auto w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2">Não-Terminal</th>
+                        <th class="border border-gray-300 px-4 py-2">Produções</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">S</td>
+                        <td class="border border-gray-300 px-4 py-2">A B</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">A</td>
+                        <td class="border border-gray-300 px-4 py-2">a</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">B</td>
+                        <td class="border border-gray-300 px-4 py-2">b</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Conjuntos First e Follow</h2>
+            <table class="table-auto w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2">Não-Terminal</th>
+                        <th class="border border-gray-300 px-4 py-2">First</th>
+                        <th class="border border-gray-300 px-4 py-2">Follow</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">S</td>
+                        <td class="border border-gray-300 px-4 py-2">a</td>
+                        <td class="border border-gray-300 px-4 py-2">$</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">A</td>
+                        <td class="border border-gray-300 px-4 py-2">a</td>
+                        <td class="border border-gray-300 px-4 py-2">b</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">B</td>
+                        <td class="border border-gray-300 px-4 py-2">b</td>
+                        <td class="border border-gray-300 px-4 py-2">$</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Tabela de Parsing</h2>
+            <table class="table-auto w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2">Não-Terminal</th>
+                        <th class="border border-gray-300 px-4 py-2">a</th>
+                        <th class="border border-gray-300 px-4 py-2">b</th>
+                        <th class="border border-gray-300 px-4 py-2">$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">S</td>
+                        <td class="border border-gray-300 px-4 py-2">S → A B</td>
+                        <td class="border border-gray-300 px-4 py-2">-</td>
+                        <td class="border border-gray-300 px-4 py-2">-</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">A</td>
+                        <td class="border border-gray-300 px-4 py-2">A → a</td>
+                        <td class="border border-gray-300 px-4 py-2">-</td>
+                        <td class="border border-gray-300 px-4 py-2">-</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">B</td>
+                        <td class="border border-gray-300 px-4 py-2">-</td>
+                        <td class="border border-gray-300 px-4 py-2">B → b</td>
+                        <td class="border border-gray-300 px-4 py-2">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold mb-4">Processo de Parsing (Pilha)</h2>
+            <table class="table-auto w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2">Passo</th>
+                        <th class="border border-gray-300 px-4 py-2">Pilha</th>
+                        <th class="border border-gray-300 px-4 py-2">Entrada</th>
+                        <th class="border border-gray-300 px-4 py-2">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">1</td>
+                        <td class="border border-gray-300 px-4 py-2">S</td>
+                        <td class="border border-gray-300 px-4 py-2">a b $</td>
+                        <td class="border border-gray-300 px-4 py-2">Expandir S → A B</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">2</td>
+                        <td class="border border-gray-300 px-4 py-2">A B</td>
+                        <td class="border border-gray-300 px-4 py-2">a b $</td>
+                        <td class="border border-gray-300 px-4 py-2">Expandir A → a</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">3</td>
+                        <td class="border border-gray-300 px-4 py-2">a B</td>
+                        <td class="border border-gray-300 px-4 py-2">a b $</td>
+                        <td class="border border-gray-300 px-4 py-2">Consumir a</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main> -->
+    <div id="token-input"></div>
+    <div id="grammar"></div>
+    <div id="parsing"><div>
 </body>
 </html>

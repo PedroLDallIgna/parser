@@ -10,18 +10,22 @@ import grammar from './grammars/grammar2.json';
 // styles
 import './index.css';
 import { GrammarSchema } from './types/grammar-schema';
-import { Table } from './components/table';
-import { TableColumn } from './components/table-column';
-import { TableRow } from './components/table-row';
-import { TableCell } from './components/table-cell';
-import { set } from 'lodash';
+import { ParsingStackTable } from './components/parsing-stack-table';
+import { ParsingTable } from './components/parsing-table';
+import { FirstFollowTable } from './components/first-follow-table';
+import { Column } from './components/core/column';
+import { Row } from './components/core/row';
+import { GrammarTable } from './components/grammar-table';
 
 console.log(grammar);
 
 const parsedGrammar = grammar as GrammarSchema;
 
-const root = <HTMLDivElement>(
-  document.getElementById('app')!
+const grammarInfo = <HTMLDivElement>(
+  document.getElementById('grammar')!
+);
+const parsing = <HTMLDivElement>(
+  document.getElementById('parsing')!
 );
 
 const entryToken = 'adcaa';
@@ -49,41 +53,42 @@ const actions = process(stack, entryQueue, parsedGrammar);
 
 console.log('Final actions:', actions);
 
-const myTable = (rows: number) =>
-  new Table({
-    rows: [
-      ...actions
-        .map((action) => {
-          return new TableRow({
-            cells: [
-              new TableCell({
-                value: action.stack.join(' '),
-              }),
-              new TableCell({
-                value: action.queue.join(' '),
-              }),
-              new TableCell({ value: action.action }),
-            ],
-          });
-        })
-        .slice(0, rows),
-    ],
-    columns: [
-      new TableColumn({ label: 'Pilha' }),
-      new TableColumn({ label: 'Entrada' }),
-      new TableColumn({ label: 'Ação' }),
-    ],
-    index: true,
-  });
+const grammarTable = new GrammarTable({
+  rules: parsedGrammar.rules,
+});
+
+const firstFollowTable = new FirstFollowTable({
+  firstSets: parsedGrammar.firstSets,
+  followSets: parsedGrammar.followSets,
+});
+
+const parsingTable = new ParsingTable({
+  parsingTable: parsedGrammar.parsingTable,
+  terminals: parsedGrammar.terminals,
+});
+
+const parsingStackTable = new ParsingStackTable(actions);
+
+const grammarInfoContainer = new Column({
+  children: [
+    new Row({
+      children: [grammarTable, firstFollowTable],
+      gap: '4',
+    }),
+    parsingTable,
+  ],
+  gap: '4',
+});
 
 let n = 1;
 const interval = setInterval(() => {
   if (n <= actions.length) {
-    render(myTable(n).render(), root);
+    render(parsingStackTable.render(n), parsing);
     n++;
   } else {
     clearInterval(interval);
   }
 }, 1000);
 
-// render(tokenForm, root);
+render(grammarInfoContainer.render(), grammarInfo);
+// render(parsingStackTable.render(actions.length), parsing);
