@@ -9,10 +9,15 @@ export class TableRow {
     this.cells = cells;
   }
 
-  render(index: number): TemplateResult<1> {
+  render(index?: number): TemplateResult<1> {
     return html`
       <tr class="cursor-pointer">
-        ${index && new TableCell({ value: index }).render()}
+        ${index &&
+        new TableCell({
+          value: index,
+          alignment: 'center',
+          background: 'gray-200',
+        }).render()}
         ${this.cells.map((cell) => cell.render())}
       </tr>
     `;

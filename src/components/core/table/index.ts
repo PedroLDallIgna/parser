@@ -29,15 +29,20 @@ export class Table<T extends Record<string, any>> {
     return html`
       <table class="min-w-full border-collapse">
         <thead>
-          <tr>
+          <tr class="bg-gray-200">
             ${this.index &&
-            new TableColumn({ label: '#' }).render()}
+            new TableColumn({
+              label: '#',
+              alignment: 'center',
+            }).render()}
             ${this.columns.map((column) => column.render())}
           </tr>
         </thead>
         <tbody>
           ${this.rows.map((row, rowIndex) =>
-            row.render(rowIndex + 1)
+            row.render(
+              this.index ? rowIndex + 1 : undefined
+            )
           )}
         </tbody>
       </table>
