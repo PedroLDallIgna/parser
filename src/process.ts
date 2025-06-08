@@ -20,7 +20,32 @@ export function process(
     step['stack'] = [...stack.getItems()];
     step['queue'] = [...entryQueue.getItems()];
 
-    if (!currentSymbol || !currentToken) break;
+    if (!currentSymbol || !currentToken)
+      throw new Error(
+        'Invalid state: empty stack or queue'
+      );
+
+    if (currentSymbol === '$' && currentToken === '$') {
+      step['action'] = 'Accept';
+      actions.push(step);
+      entryQueue.dequeue();
+      stack.pop();
+      break;
+    }
+
+    if (currentSymbol === '$' && currentToken !== '$') {
+      step['action'] =
+        'Erro: a pilha está vazia mas a entrada não';
+      actions.push(step);
+      break;
+    }
+
+    if (currentToken === '$' && currentSymbol !== '$') {
+      step['action'] =
+        'Erro: a entrada está vazia mas a pilha não';
+      actions.push(step);
+      break;
+    }
 
     if (currentToken === currentSymbol) {
       step['action'] = `Read ${currentToken}`;
