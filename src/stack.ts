@@ -21,6 +21,10 @@ class Stack<T> {
     return this.items.length;
   }
 
+  clear(): void {
+    this.items = [];
+  }
+
   getItems(): T[] {
     return this.items;
   }

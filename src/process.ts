@@ -2,7 +2,6 @@ import Queue from './queue';
 import Stack from './stack';
 import { GrammarSchema } from './types/grammar-schema';
 
-// throw an error when cant find production
 export function process(
   stack: Stack<string>,
   entryQueue: Queue<string>,
@@ -26,7 +25,7 @@ export function process(
       );
 
     if (currentSymbol === '$' && currentToken === '$') {
-      step['action'] = 'Accept';
+      step['action'] = 'Aceito';
       actions.push(step);
       entryQueue.dequeue();
       stack.pop();
@@ -37,6 +36,8 @@ export function process(
       step['action'] =
         'Erro: a pilha está vazia mas a entrada não';
       actions.push(step);
+      stack.clear();
+      entryQueue.clear();
       break;
     }
 
@@ -44,15 +45,29 @@ export function process(
       step['action'] =
         'Erro: a entrada está vazia mas a pilha não';
       actions.push(step);
+      stack.clear();
+      entryQueue.clear();
       break;
     }
 
-    if (currentToken === currentSymbol) {
-      step['action'] = `Read ${currentToken}`;
-      actions.push(step);
-      entryQueue.dequeue();
-      stack.pop();
-      continue;
+    if (
+      grammar.terminals.includes(currentSymbol) &&
+      grammar.terminals.includes(currentToken)
+    ) {
+      if (currentToken === currentSymbol) {
+        step['action'] = `Lê '${currentToken}'`;
+        actions.push(step);
+        entryQueue.dequeue();
+        stack.pop();
+        continue;
+      } else {
+        step['action'] =
+          'Erro: símbolo terminal não corresponde ao token de entrada';
+        actions.push(step);
+        stack.clear();
+        entryQueue.clear();
+        break;
+      }
     }
 
     if (currentSymbol in grammar.parsingTable) {
@@ -63,7 +78,7 @@ export function process(
           grammar.parsingTable[currentSymbol][currentToken];
 
         step['action'] =
-          `Expand: ${currentSymbol} -> ${production}`;
+          `Expande: ${currentSymbol} -> ${production}`;
         actions.push(step);
 
         stack.pop();
@@ -77,6 +92,13 @@ export function process(
           }
         }
       }
+    } else {
+      step['action'] =
+        'Erro: símbolo não encontrado na tabela de parsing';
+      actions.push(step);
+      stack.clear();
+      entryQueue.clear();
+      break;
     }
   }
 

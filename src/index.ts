@@ -9,6 +9,8 @@ import grammar from './grammars/grammar2.json';
 
 // styles
 import './index.css';
+
+// components
 import { GrammarSchema } from './types/grammar-schema';
 import { ParsingStackTable } from './components/parsing-stack-table';
 import { ParsingTable } from './components/parsing-table';
@@ -28,7 +30,11 @@ const parsing = <HTMLDivElement>(
   document.getElementById('parsing')!
 );
 
-const entryToken = 'adcaa';
+// const entryToken = 'adcaa';
+// const entryToken = 'dbbbbc';
+// const entryToken = 'ccabbc';
+// const entryToken = 'acbbca';
+const entryToken = 'acabbca';
 
 // type must be alphabet and $
 const entryQueue = new Queue<string>();
@@ -79,6 +85,8 @@ const grammarInfoContainer = new Column({
   ],
   gap: '4',
 });
+
+render(parsingStackTable.render(0), parsing);
 
 let n = 1;
 const interval = setInterval(() => {
