@@ -27,6 +27,9 @@ const parsedGrammar = grammar as GrammarSchema;
 const tokenInput = <HTMLInputElement>(
   document.getElementById('token-input')!
 );
+const actionBarEl = <HTMLInputElement>(
+  document.getElementById('toolbar')!
+);
 const grammarInfo = <HTMLDivElement>(
   document.getElementById('grammar')!
 );
@@ -64,11 +67,42 @@ const stack = new Stack<string>();
 
 // console.log('Final actions:', actions);
 
-const myButton = html` <button
-  @click=${(e: any) => console.log('Clicked')}
->
-  Click me
-</button>`;
+const openActionBar = (
+  actions: any[],
+  parsingStackTable: ParsingStackTable,
+  n: number
+) => {
+  const actionBar = html`
+    <div class="flex flex-row items-center p-4 space-x-2">
+      <button
+        class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${n ===
+        0
+          ? 'opacity-50 cursor-not-allowed disabled'
+          : 'cursor-pointer'}"
+        @click=${(e: any) => {
+          stepBackward(actions, parsingStackTable, n);
+        }}
+        ?disabled=${n === 0}
+      >
+        Step back
+      </button>
+      <button
+        class="bg-blue-500 text-white py-2 px-4 cursor-pointer rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${n ===
+        actions.length
+          ? 'opacity-50 cursor-not-allowed disabled'
+          : 'cursor-pointer'}"
+        @click=${(e: any) => {
+          stepForward(actions, parsingStackTable, n);
+        }}
+        ?disabled=${n === actions.length}
+      >
+        Step forward
+      </button>
+    </div>
+  `;
+
+  render(actionBar, actionBarEl);
+};
 
 const tokenInputForm = new TokenInput({
   token: entryToken,
@@ -106,7 +140,36 @@ const tokenInputForm = new TokenInput({
     stack.push(grammar.startSymbol);
     console.log('Initial Stack:', stack);
 
-    stepByStep();
+    steps();
+  },
+  onDebug: () => {
+    entryQueue.clear();
+    stack.clear();
+
+    for (const char of entryToken) {
+      entryQueue.enqueue(char);
+    }
+    entryQueue.enqueue('$');
+    console.log('Entry Queue:', entryQueue);
+
+    stack.push('$');
+    stack.push(grammar.startSymbol);
+    console.log('Initial Stack:', stack);
+
+    let n = 0;
+    const actions = process(
+      stack,
+      entryQueue,
+      parsedGrammar
+    );
+    const parsingStackTable = new ParsingStackTable(
+      actions
+    );
+
+    render(parsingStackTable.render(0), parsing);
+
+    // render debugging toolbar
+    openActionBar(actions, parsingStackTable, n);
   },
 });
 
@@ -120,9 +183,7 @@ const executeStack = () => {
   render(parsingStackTable.render(actions.length), parsing);
 };
 
-function* steps() {}
-
-const stepByStep = () => {
+const steps = () => {
   const actions = process(stack, entryQueue, parsedGrammar);
 
   const parsingStackTable = new ParsingStackTable(actions);
@@ -137,6 +198,36 @@ const stepByStep = () => {
     }
   }, 1000);
 };
+
+function stepForward(
+  actions: any[],
+  parsingStackTable: ParsingStackTable,
+  n: number
+) {
+  console.log('clicked');
+
+  if (n < actions.length) {
+    n++;
+    render(parsingStackTable.render(n), parsing);
+  }
+
+  openActionBar(actions, parsingStackTable, n);
+}
+
+function stepBackward(
+  actions: any[],
+  parsingStackTable: ParsingStackTable,
+  n: number
+) {
+  console.log('clicked');
+
+  if (n > 0) {
+    n--;
+    render(parsingStackTable.render(n), parsing);
+  }
+
+  openActionBar(actions, parsingStackTable, n);
+}
 
 const grammarTable = new GrammarTable({
   rules: parsedGrammar.rules,

@@ -5,7 +5,7 @@ export class TokenInput {
   private onRun: () => void;
   private onPause?: () => void;
   private onStepOver?: () => void;
-  private onStepInto?: () => void;
+  private onDebug?: () => void;
   private onStop?: () => void;
   private onInputChange: (event: Event) => void;
   private onSubmit?: (event: Event) => void;
@@ -15,7 +15,7 @@ export class TokenInput {
     onRun,
     onPause,
     onStepOver,
-    onStepInto,
+    onDebug,
     onStop,
     onInputChange,
     onSubmit,
@@ -24,7 +24,7 @@ export class TokenInput {
     onRun: () => void;
     onPause?: () => void;
     onStepOver?: () => void;
-    onStepInto?: () => void;
+    onDebug?: () => void;
     onStop?: () => void;
     onInputChange: (event: Event) => void;
     onSubmit?: (event: Event) => void;
@@ -33,7 +33,7 @@ export class TokenInput {
     this.onRun = onRun;
     this.onPause = onPause;
     this.onStepOver = onStepOver;
-    this.onStepInto = onStepInto;
+    this.onDebug = onDebug;
     this.onStop = onStop;
     this.onInputChange = onInputChange;
     this.onSubmit = onSubmit;
@@ -58,29 +58,21 @@ export class TokenInput {
           <button
             @click=${(event: any) => this.onRun()}
             class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            title="Run without debugging"
           >
-            ▶️ Run
+            Run
           </button>
           <button
             @click=${(event: any) => this.onPause?.()}
             class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            ⏸️ Pause
+            Run with delay
           </button>
           <button
+            @click=${(event: any) => this.onDebug?.()}
             class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            ⏩ Step Over
-          </button>
-          <button
-            class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            ⏬ Step Into
-          </button>
-          <button
-            class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            ⏹️ Stop
+            Run & Debug
           </button>
         </div>
       </div>
