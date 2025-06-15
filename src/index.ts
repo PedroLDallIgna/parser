@@ -106,7 +106,7 @@ const openActionBar = (
 
 const tokenInputForm = new TokenInput({
   token: entryToken,
-  onRun: () => {
+  onRun: (delay) => {
     entryQueue.clear();
     stack.clear();
 
@@ -120,27 +120,11 @@ const tokenInputForm = new TokenInput({
     stack.push(grammar.startSymbol);
     console.log('Initial Stack:', stack);
 
-    executeStack();
+    executeStack(delay);
   },
   onInputChange: (event: Event) => {
     const { value } = event.target as HTMLInputElement;
     entryToken = value;
-  },
-  onPause: () => {
-    entryQueue.clear();
-    stack.clear();
-
-    for (const char of entryToken) {
-      entryQueue.enqueue(char);
-    }
-    entryQueue.enqueue('$');
-    console.log('Entry Queue:', entryQueue);
-
-    stack.push('$');
-    stack.push(grammar.startSymbol);
-    console.log('Initial Stack:', stack);
-
-    steps();
   },
   onDebug: () => {
     entryQueue.clear();
@@ -175,18 +159,12 @@ const tokenInputForm = new TokenInput({
 
 render(tokenInputForm.render(), tokenInput);
 
-const executeStack = () => {
+const executeStack = (delay: number) => {
   const actions = process(stack, entryQueue, parsedGrammar);
 
   const parsingStackTable = new ParsingStackTable(actions);
 
-  render(parsingStackTable.render(actions.length), parsing);
-};
-
-const steps = () => {
-  const actions = process(stack, entryQueue, parsedGrammar);
-
-  const parsingStackTable = new ParsingStackTable(actions);
+  render(parsingStackTable.render(0), parsing);
 
   let n = 1;
   const interval = setInterval(() => {
@@ -196,7 +174,7 @@ const steps = () => {
     } else {
       clearInterval(interval);
     }
-  }, 1000);
+  }, delay);
 };
 
 function stepForward(
