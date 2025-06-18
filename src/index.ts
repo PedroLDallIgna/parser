@@ -87,7 +87,7 @@ const openActionBar = (
         Step back
       </button>
       <button
-        class="bg-blue-500 text-white py-2 px-4 cursor-pointer rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${n ===
+        class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${n ===
         actions.length
           ? 'opacity-50 cursor-not-allowed disabled'
           : 'cursor-pointer'}"
