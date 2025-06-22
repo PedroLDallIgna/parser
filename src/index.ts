@@ -19,6 +19,8 @@ import { Column } from './components/core/column';
 import { Row } from './components/core/row';
 import { GrammarTable } from './components/grammar-table';
 import { TokenInput } from './components/token-input';
+import { Modal } from './components/core/modal';
+import { TokenGenerator } from './components/token-generator';
 
 console.log(grammar);
 
@@ -227,24 +229,44 @@ const grammarInfoContainer = new Column({
   children: [
     new Row({
       children: [grammarTable, firstFollowTable],
-      gap: '4',
+      gap: '2',
     }),
     parsingTable,
   ],
-  gap: '4',
+  gap: '2',
 });
 
-// render(parsingStackTable.render(0), parsing);
+const grammarInfoModal = new Modal({
+  btnLabel: 'Ver gramática',
+  content: html`<div
+    class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left"
+  >
+    <h3
+      class="text-lg font-semibold text-gray-900"
+      id="dialog-title"
+    >
+      Gramática
+    </h3>
+    <div class="mt-2">${grammarInfoContainer.render()}</div>
+  </div>`,
+  element: grammarInfo,
+});
 
-// let n = 1;
-// const interval = setInterval(() => {
-//   if (n <= actions.length) {
-//     render(parsingStackTable.render(n), parsing);
-//     n++;
-//   } else {
-//     clearInterval(interval);
-//   }
-// }, 1000);
+grammarInfoModal.render();
 
-render(grammarInfoContainer.render(), grammarInfo);
-// render(parsingStackTable.render(actions.length), parsing);
+const tokenGeneratorEl = document.getElementById(
+  'token-generator'
+)!;
+
+const tokenGenerator = new TokenGenerator({
+  element: tokenGeneratorEl,
+  grammar: parsedGrammar,
+  onGenerated: (token: string) => {
+    navigator.clipboard.writeText(token);
+    window.alert(
+      'Token copiado para a área de transferência: ' + token
+    );
+  },
+});
+
+tokenGenerator.render();
