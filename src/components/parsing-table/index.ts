@@ -26,6 +26,7 @@ export class ParsingTable {
   render(): TemplateResult {
     return new Container({
       child: new Table({
+        caption: 'Tabela de Parsing',
         columns: [
           new TableColumn({
             label: ' ',

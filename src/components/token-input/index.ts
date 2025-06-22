@@ -6,7 +6,7 @@ export class TokenInput {
   private delay: number = 0;
   private onRun: (delay: number) => void;
   private onDebug?: () => void;
-  private onInputChange: (event: Event) => void;
+  private onInputChange: (event: any) => void;
   private delayValueEl: ReturnType<
     typeof createRef<HTMLSpanElement>
   >;
@@ -20,7 +20,7 @@ export class TokenInput {
     token?: string;
     onRun: (delay: number) => void;
     onDebug?: () => void;
-    onInputChange: (event: Event) => void;
+    onInputChange: (event: any) => void;
   }) {
     this.token = token || '';
     this.onRun = onRun;
@@ -40,6 +40,7 @@ export class TokenInput {
             placeholder=""
             @input=${(event: any) =>
               this.onInputChange(event)}
+            .value=${this.token}
           />
         </label>
         <label

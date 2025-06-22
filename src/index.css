@@ -1,1 +1,31 @@
 @import 'tailwindcss';
+
+button:disabled.production-rule {
+  background-color: #cf2c2c;
+  cursor: not-allowed;
+}
+
+button:disabled.production-rule:hover {
+  background-color: #c01f1f;
+  cursor: not-allowed;
+}
+
+button.production-rule {
+  background-color: #37cc37;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  min-width: 60px;
+  font-size: 16px;
+  font-family: monospace;
+}
+
+button.production-rule:hover {
+  background-color: #1fc01f;
+}
+
+.non-terminal {
+  font-size: 16px;
+  font-family: monospace;
+  font-size: 18px;
+}

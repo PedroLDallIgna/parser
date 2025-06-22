@@ -20,6 +20,7 @@ export class GrammarTable {
   render(): TemplateResult {
     return new Container({
       child: new Table({
+        caption: 'Regras da Gramática',
         columns: [
           new TableColumn({
             label: 'Símbolo',

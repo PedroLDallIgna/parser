@@ -7,27 +7,38 @@ export class Table<T extends Record<string, any>> {
   private columns: TableColumn[];
   private onRowClick?: (item: T) => void;
   private index?: boolean;
+  private caption?: string;
 
   constructor({
     rows,
     columns,
     onRowClick,
     index,
+    caption,
   }: {
     rows: TableRow[];
     columns: TableColumn[];
     onRowClick?: (item: T) => void;
     index?: boolean;
+    caption?: string;
   }) {
     this.rows = rows;
     this.columns = columns;
     this.onRowClick = onRowClick;
     this.index = index;
+    this.caption = caption;
   }
 
   render(): TemplateResult<1> {
     return html`
       <table class="min-w-full border-collapse">
+        ${this.caption
+          ? html`<caption
+              class="text-base font-semibold mb-4"
+            >
+              ${this.caption}
+            </caption>`
+          : ''}
         <thead>
           <tr class="bg-gray-200">
             ${this.index &&
