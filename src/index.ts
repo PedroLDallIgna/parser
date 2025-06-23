@@ -261,12 +261,6 @@ const tokenGeneratorEl = document.getElementById(
 const tokenGenerator = new TokenGenerator({
   element: tokenGeneratorEl,
   grammar: parsedGrammar,
-  onGenerated: (token: string) => {
-    navigator.clipboard.writeText(token);
-    window.alert(
-      'Token copiado para a área de transferência: ' + token
-    );
-  },
 });
 
 tokenGenerator.render();

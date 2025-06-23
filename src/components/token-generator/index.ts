@@ -39,7 +39,7 @@ export class TokenGenerator {
     return '';
   }
 
-  private resetToken() {
+  private handleReset() {
     this._derivation = `${this._grammar.startSymbol}`;
     this._history = [this._derivation];
     this._historyIndex = 0;
@@ -47,7 +47,7 @@ export class TokenGenerator {
     this.render();
   }
 
-  private navigateBackward() {
+  private handleUndo() {
     if (this._historyIndex > 0) {
       this._historyIndex--;
       this._derivation = this._history[this._historyIndex];
@@ -56,8 +56,8 @@ export class TokenGenerator {
     }
   }
 
-  private navigateForward() {
-    if (this._historyIndex < history.length - 1) {
+  private handleRedo() {
+    if (this._historyIndex < this._history.length - 1) {
       this._historyIndex++;
       this._derivation = this._history[this._historyIndex];
 
@@ -96,87 +96,60 @@ export class TokenGenerator {
       this._onGenerated(this._derivation);
     }
   }
+
+  private handleCopy() {
+    navigator.clipboard.writeText(this._derivation);
+  }
+
   private content() {
     return html`
       <div>
         <div class="controls flex flex-row space-x-2 mb-4">
           <button
             class="bg-blue-500 text-white py-2 px-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            @click=${() => this.resetToken()}
+            @click=${() => this.handleReset()}
             title="Resetar token"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 15 15"
-            >
-              <path
-                fill="currentColor"
-                fill-rule="evenodd"
-                d="M4.854 2.146a.5.5 0 0 1 0 .708L3.707 4H9a4.5 4.5 0 1 1 0 9H5a.5.5 0 0 1 0-1h4a3.5 3.5 0 1 0 0-7H3.707l1.147 1.146a.5.5 0 1 1-.708.708l-2-2a.5.5 0 0 1 0-.708l2-2a.5.5 0 0 1 .708 0"
-                clip-rule="evenodd"
-                stroke-width="1"
-                stroke="currentColor"
-              />
-            </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" stroke-width="1" stroke="currentColor"/></svg>
           </button>
           <button
-            class="bg-blue-500 text-white py-2 px-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${this
-              ._historyIndex === 0
-              ? 'opacity-50 cursor-not-allowed'
-              : 'cursor-pointer'}"
-            @click=${() => this.navigateBackward()}
+            class="bg-blue-500 text-white py-2 px-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              this._historyIndex === 0
+                ? 'opacity-50 cursor-not-allowed'
+                : 'cursor-pointer'
+            }"
+            @click=${() => this.handleUndo()}
             ?disabled=${this._historyIndex === 0}
-            title="Alteração anterior"
+            title="Desfazer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 15 15"
-            >
-              <path
-                fill="currentColor"
-                fill-rule="evenodd"
-                d="M6.854 3.146a.5.5 0 0 1 0 .708L3.707 7H12.5a.5.5 0 0 1 0 1H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0"
-                clip-rule="evenodd"
-                stroke-width="1"
-                stroke="currentColor"
-              />
-            </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M20 10H7.815l3.587-3.586L10 5l-6 6l6 6l1.402-1.415L7.818 12H20a6 6 0 0 1 0 12h-8v2h8a8 8 0 0 0 0-16" stroke-width="1" stroke="currentColor"/></svg>
           </button>
           <button
-            class="bg-blue-500 text-white py-2 px-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${this
-              ._historyIndex ===
-            history.length - 1
-              ? 'opacity-50 cursor-not-allowed'
-              : 'cursor-pointer'}"
-            @click=${() => this.navigateForward()}
-            ?disabled=${this._historyIndex ===
-            this._history.length - 1}
-            title="Alteração seguinte"
+            class="bg-blue-500 text-white py-2 px-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              this._historyIndex ===
+              this._history.length - 1
+                ? 'opacity-50 cursor-not-allowed'
+                : 'cursor-pointer'
+            }"
+            @click=${() => this.handleRedo()}
+            ?disabled=${
+              this._historyIndex ===
+              this._history.length - 1
+            }
+            title="Refazer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 15 15"
-            >
-              <path
-                fill="currentColor"
-                fill-rule="evenodd"
-                d="M8.146 3.146a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L11.293 8H2.5a.5.5 0 0 1 0-1h8.793L8.146 3.854a.5.5 0 0 1 0-.708"
-                clip-rule="evenodd"
-                stroke-width="1"
-                stroke="currentColor"
-              />
-            </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M12 10h12.185l-3.587-3.586L22 5l6 6l-6 6l-1.402-1.415L24.182 12H12a6 6 0 0 0 0 12h8v2h-8a8 8 0 0 1 0-16" stroke-width="1" stroke="currentColor"/></svg>
           </button>
         </div>
         <div class="token-display mb-4">
-          <p class="font-bold text-lg text-gray-800">
-            Derivação: ${this._derivation}
+          <label class="font-bold text-lg inline-flex text-gray-800 space-x-2 items-center">
+            <span>Derivação:</span>
+            <div class="derivation-result inline-flex">
+              <input name="token" type="text" .value=${this._derivation} readonly class="derivation w-32 text-gray-600 bg-gray-200 py-1 px-2 rounded-l-sm focus:outline-none"/>
+              <button class="flex items-center copy-icon cursor-pointer py-1 px-2  bg-gray-300 rounded-r-sm hover:bg-gray-400 focus:outline" @click=${() => this.handleCopy()} ?disabled=${!!this.leftMostNonTerminal}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2" stroke-width="1" stroke="currentColor"/><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z" stroke-width="1" stroke="currentColor"/></svg>
+              </button>
+            </div>
           </p>
         </div>
         ${Object.entries(this._grammar.rules).map(

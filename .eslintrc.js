@@ -1,4 +1,4 @@
-const { plugins } = require("./webpack.config");
+const { plugins } = require('./webpack.config');
 
 module.exports = {
   parser: '@typescript-eslint/parser',
@@ -14,5 +14,5 @@ module.exports = {
   ],
   rules: {
     'prettier/prettier': 'error',
-  }
-}
+  },
+};
