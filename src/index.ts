@@ -107,6 +107,7 @@ const openActionBar = (
 };
 
 const tokenInputForm = new TokenInput({
+  grammar: parsedGrammar,
   token: entryToken,
   onRun: (delay) => {
     entryQueue.clear();
@@ -124,9 +125,9 @@ const tokenInputForm = new TokenInput({
 
     executeStack(delay);
   },
-  onInputChange: (event: Event) => {
-    const { value } = event.target as HTMLInputElement;
+  onInputChange: (value: string) => {
     entryToken = value;
+    console.log('Input changed:', entryToken);
   },
   onDebug: () => {
     entryQueue.clear();
