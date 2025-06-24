@@ -103,8 +103,8 @@ export class TokenGenerator {
 
   private content() {
     return html`
-      <div>
-        <div class="controls flex flex-row space-x-2 mb-4">
+      <div class="token-generator flex flex-row p-4 mt-4 mb-4 space-x-4 bg-white rounded-lg shadow-md">
+        <div class="controls flex flex-col space-y-2 p-2 justify-center rounded-md shadow-md">
           <button
             class="bg-blue-500 text-white py-2 px-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             @click=${() => this.handleReset()}
@@ -140,53 +140,63 @@ export class TokenGenerator {
           >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M12 10h12.185l-3.587-3.586L22 5l6 6l-6 6l-1.402-1.415L24.182 12H12a6 6 0 0 0 0 12h8v2h-8a8 8 0 0 1 0-16" stroke-width="1" stroke="currentColor"/></svg>
           </button>
+          <button
+            class="bg-blue-500 text-white py-2 px-3 rounded-md cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            @click=${() => {}}
+            title="Árvore de derivação"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-linejoin="round" d="M7.997 4.152V7.5m0 0h5V11m-5-3.5h-5V11m5-3.5V11M9.5 2.507V4.51h-3V2.507zm5 7.993v2h-3v-2zm-5 0v2h-3v-2zm-5 0v2h-3v-2z" stroke-width="1"/></svg>
+          </button>
         </div>
-        <div class="token-display mb-4">
-          <label class="font-bold text-lg inline-flex text-gray-800 space-x-2 items-center">
-            <span>Derivação:</span>
-            <div class="derivation-result inline-flex">
-              <input name="token" type="text" .value=${this._derivation} readonly class="derivation w-32 text-gray-600 bg-gray-200 py-1 px-2 rounded-l-sm focus:outline-none"/>
-              <button class="flex items-center copy-icon cursor-pointer py-1 px-2  bg-gray-300 rounded-r-sm hover:bg-gray-400 focus:outline" @click=${() => this.handleCopy()} ?disabled=${!!this.leftMostNonTerminal}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2" stroke-width="1" stroke="currentColor"/><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z" stroke-width="1" stroke="currentColor"/></svg>
-              </button>
-            </div>
-          </p>
-        </div>
-        ${Object.entries(this._grammar.rules).map(
-          ([nonTerminal, rules]) => {
-            return html`
-              <div
-                class="flex flex-row items-center space-x-1 m-2"
-              >
-                <p
-                  class="non-terminal font-bold text-lg text-gray-800"
-                >
-                  ${nonTerminal}
-                </p>
-                <span
-                  class="non-terminal font-bold text-lg text-gray-800"
-                  >::=</span
-                >
-                <ul class="flex flex-row space-x-2">
-                  ${rules.map(
-                    (rule) =>
-                      html` <li>
-                        <button
-                          class="production-rule bg-gray-200 text-white b-solid rounded py-1 px-2 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                          ?disabled=${this
-                            .leftMostNonTerminal !==
-                          nonTerminal}
-                          @click=${() => this.expand(rule)}
-                        >
-                          ${rule}
-                        </button>
-                      </li>`
-                  )}
-                </ul>
+        <div class="token-display-container flex flex-col space-y-2">
+          <div class="token-display mb-4">
+            <label class="font-bold text-lg inline-flex text-gray-800 space-x-2 items-center">
+              <span>Derivação:</span>
+              <div class="derivation-result inline-flex">
+                <input name="token" type="text" .value=${this._derivation} readonly class="derivation w-32 text-gray-600 bg-gray-200 py-1 px-2 rounded-l-sm focus:outline-none"/>
+                <button class="flex items-center copy-icon cursor-pointer py-1 px-2  bg-gray-300 rounded-r-sm hover:bg-gray-400 focus:outline" @click=${() => this.handleCopy()} ?disabled=${!!this.leftMostNonTerminal}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2" stroke-width="1" stroke="currentColor"/><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z" stroke-width="1" stroke="currentColor"/></svg>
+                </button>
               </div>
-            `;
-          }
-        )}
+            </p>
+          </div>
+          ${Object.entries(this._grammar.rules).map(
+            ([nonTerminal, rules]) => {
+              return html`
+                <div
+                  class="flex flex-row items-center space-x-1"
+                >
+                  <p
+                    class="non-terminal font-bold text-lg text-gray-800"
+                  >
+                    ${nonTerminal}
+                  </p>
+                  <span
+                    class="non-terminal font-bold text-lg text-gray-800"
+                    >::=</span
+                  >
+                  <ul class="flex flex-row space-x-2">
+                    ${rules.map(
+                      (rule) =>
+                        html` <li>
+                          <button
+                            class="production-rule bg-gray-200 text-white b-solid rounded py-1 px-2 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            ?disabled=${this
+                              .leftMostNonTerminal !==
+                            nonTerminal}
+                            @click=${() =>
+                              this.expand(rule)}
+                          >
+                            ${rule}
+                          </button>
+                        </li>`
+                    )}
+                  </ul>
+                </div>
+              `;
+            }
+          )}
+        </div>
       </div>
     `;
   }

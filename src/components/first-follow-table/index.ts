@@ -22,6 +22,7 @@ export class FirstFollowTable {
 
   render(): TemplateResult {
     return new Container({
+      padding: '0',
       child: new Table({
         caption: 'Conjuntos First e Follow',
         columns: [

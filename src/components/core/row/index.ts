@@ -18,7 +18,7 @@ export class Row {
 
   render(): TemplateResult<1> {
     return html`
-      <div class="flex flex-row space-x-${this.gap}">
+      <div class="flex flex-row gap-${this.gap}">
         ${this.children.map((child) => child.render())}
       </div>
     `;

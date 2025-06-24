@@ -18,7 +18,7 @@ export class Column {
 
   render(): TemplateResult<1> {
     return html`
-      <div class="flex flex-col space-y-${this.gap}">
+      <div class="flex flex-col gap-${this.gap}">
         ${this.children.map((child) => child.render())}
       </div>
     `;

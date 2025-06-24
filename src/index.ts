@@ -32,9 +32,6 @@ const tokenInput = <HTMLInputElement>(
 const actionBarEl = <HTMLInputElement>(
   document.getElementById('toolbar')!
 );
-const grammarInfo = <HTMLDivElement>(
-  document.getElementById('grammar')!
-);
 const parsing = <HTMLDivElement>(
   document.getElementById('parsing')!
 );
@@ -158,9 +155,14 @@ const tokenInputForm = new TokenInput({
     // render debugging toolbar
     openActionBar(actions, parsingStackTable, n);
   },
+  extra: html`<div id="grammar"></div>`,
 });
 
 render(tokenInputForm.render(), tokenInput);
+
+const grammarInfo = <HTMLDivElement>(
+  document.getElementById('grammar')!
+);
 
 const executeStack = (delay: number) => {
   const actions = process(stack, entryQueue, parsedGrammar);

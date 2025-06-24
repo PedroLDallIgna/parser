@@ -19,6 +19,7 @@ export class GrammarTable {
 
   render(): TemplateResult {
     return new Container({
+      padding: '0',
       child: new Table({
         caption: 'Regras da Gramática',
         columns: [

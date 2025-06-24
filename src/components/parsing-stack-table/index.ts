@@ -14,7 +14,9 @@ export class ParsingStackTable {
 
   render(rows: number): TemplateResult {
     return new Container({
-      padding: '2',
+      padding: '4',
+      roundRadius: 'lg',
+      shadow: 'md',
       child: new Table({
         rows: [
           ...this.actions
