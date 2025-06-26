@@ -24,6 +24,8 @@ import { TokenGenerator } from './components/token-generator';
 import { maskToken } from './utils/maskToken';
 import { validateToken } from './utils/validateToken';
 
+import { drawTree } from './components/derivation-tree';
+
 console.log(grammar);
 
 const parsedGrammar = grammar as GrammarSchema;
@@ -359,6 +361,12 @@ const tokenGeneratorEl = document.getElementById(
 const tokenGenerator = new TokenGenerator({
   element: tokenGeneratorEl,
   grammar: parsedGrammar,
+  onGenerated: (token, derivationTree) => {
+    console.log('Generated token:', token);
+    console.log('Derivation tree:', derivationTree);
+
+    drawTree(derivationTree!);
+  },
 });
 
 tokenGenerator.render();

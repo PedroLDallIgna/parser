@@ -1,5 +1,18 @@
-import { html, render as litRender } from 'lit-html';
+import {
+  html,
+  render as litRender,
+  TemplateResult,
+} from 'lit-html';
 import { GrammarSchema } from '../../types/grammar-schema';
+import Stack from '../../stack';
+import { Modal } from '../core/modal';
+import { createRef, ref } from 'lit-html/directives/ref.js';
+import { drawTree } from '../derivation-tree';
+
+type Node = {
+  name: string;
+  children: Node[];
+};
 
 export class TokenGenerator {
   private _grammar: GrammarSchema;
@@ -7,16 +20,29 @@ export class TokenGenerator {
   private _history: string[];
   private _historyIndex: number;
   public _element: HTMLElement;
-  private _onGenerated: (token: string) => void;
+  private _onGenerated: (
+    token: string,
+    treeData?: Node
+  ) => void;
+  private _derivationTree: Node;
+  private _leftMostNode: Node;
+  private _notExpandedNodes: Stack<Node>;
+  private extra?: string | TemplateResult;
+  private _extraContent: ReturnType<
+    typeof createRef<HTMLDivElement>
+  >;
+  private _isOpen: boolean = false;
 
   constructor({
     grammar,
     element,
     onGenerated,
+    extra,
   }: {
     grammar: GrammarSchema;
     element: HTMLElement;
-    onGenerated?: (token: string) => void;
+    onGenerated?: (token: string, treeData?: Node) => void;
+    extra?: string | TemplateResult;
   }) {
     this._grammar = grammar;
     this._derivation = grammar.startSymbol;
@@ -24,6 +50,15 @@ export class TokenGenerator {
     this._historyIndex = 0;
     this._element = element;
     this._onGenerated = onGenerated || (() => {});
+    this._derivationTree = {
+      name: this._grammar.startSymbol,
+      children: [],
+    };
+    this._notExpandedNodes = new Stack<Node>();
+    this._notExpandedNodes.push(this._derivationTree);
+    this._leftMostNode = this._notExpandedNodes.peek()!;
+    this.extra = extra;
+    this._extraContent = createRef<HTMLDivElement>();
   }
 
   private get leftMostNonTerminal(): string {
@@ -43,6 +78,13 @@ export class TokenGenerator {
     this._derivation = `${this._grammar.startSymbol}`;
     this._history = [this._derivation];
     this._historyIndex = 0;
+    this._derivationTree = {
+      name: this._grammar.startSymbol,
+      children: [],
+    };
+    this._notExpandedNodes.clear();
+    this._notExpandedNodes.push(this._derivationTree);
+    this._leftMostNode = this._notExpandedNodes.peek()!;
 
     this.render();
   }
@@ -79,6 +121,29 @@ export class TokenGenerator {
         rule +
         this._derivation.slice(index + 1);
 
+      const node: Node = {
+        name: this._derivation[index],
+        children: rule
+          .split('')
+          .map((char) => ({ name: char, children: [] })),
+      };
+
+      const auxNode: Node[] = node.children.filter(
+        ({ name }) =>
+          this._grammar.nonTerminals.includes(name)
+      );
+
+      this._leftMostNode.children = [...node.children];
+      this._notExpandedNodes.pop();
+
+      for (const node of auxNode.reverse()) {
+        this._notExpandedNodes.push(node);
+      }
+
+      this._leftMostNode = this._notExpandedNodes.peek()!;
+
+      console.log('derivation tree:', this._derivationTree);
+
       // Update history
       this._history = this._history.slice(
         0,
@@ -93,7 +158,11 @@ export class TokenGenerator {
     this.render();
 
     if (!this.leftMostNonTerminal) {
-      this._onGenerated(this._derivation);
+      this._onGenerated(
+        this._derivation,
+        this._derivationTree
+      );
+      console.log(this._history);
     }
   }
 
@@ -142,10 +211,23 @@ export class TokenGenerator {
           </button>
           <button
             class="bg-blue-500 text-white py-2 px-3 rounded-md cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            @click=${() => {}}
             title="Árvore de derivação"
+            @click=${() => this.toggle()}
           >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-linejoin="round" d="M7.997 4.152V7.5m0 0h5V11m-5-3.5h-5V11m5-3.5V11M9.5 2.507V4.51h-3V2.507zm5 7.993v2h-3v-2zm-5 0v2h-3v-2zm-5 0v2h-3v-2z" stroke-width="1"/></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linejoin="round"
+                d="M7.997 4.152V7.5m0 0h5V11m-5-3.5h-5V11m5-3.5V11M9.5 2.507V4.51h-3V2.507zm5 7.993v2h-3v-2zm-5 0v2h-3v-2zm-5 0v2h-3v-2z"
+                stroke-width="1"
+              />
+            </svg>
           </button>
         </div>
         <div class="token-display-container flex flex-col space-y-2">
@@ -196,6 +278,62 @@ export class TokenGenerator {
               `;
             }
           )}
+        </div>
+      </div>
+      ${this.renderModal()}
+    `;
+  }
+
+  private toggle() {
+    this._isOpen = !this._isOpen;
+    this.render();
+    if (this._isOpen) drawTree(this._derivationTree);
+  }
+
+  private renderModal() {
+    if (!this._isOpen) return html``;
+
+    return html`
+      <div
+        class="relative z-10"
+        aria-labelledby="dialog-title"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div
+          class="fixed inset-0 bg-gray-500/75 transition-opacity"
+          aria-hidden="true"
+        ></div>
+
+        <div
+          class="fixed inset-0 z-10 w-screen overflow-y-auto"
+        >
+          <div
+            class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+          >
+            <div
+              class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all max-w-4xl w-full sm:my-8 sm:w-full sm:max-w-lg"
+            >
+              <div
+                class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4"
+              >
+                <div class="sm:flex sm:items-start">
+                  <svg id="derivation-tree"></svg>
+                </div>
+              </div>
+              <div
+                class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
+              >
+                <button
+                  type="button"
+                  class="cursor-pointer inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
+                  @click=${() => this.toggle()}
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `;
