@@ -68,13 +68,36 @@ const stack = new Stack<string>();
 
 // console.log('Final actions:', actions);
 
+let debugging = false;
+
 const openActionBar = (
   actions: any[],
   parsingStackTable: ParsingStackTable,
   n: number
 ) => {
   const actionBar = html`
-    <div class="flex flex-row items-center p-4 space-x-2">
+    <div
+      class="flex flex-row items-center justify-center p-2 space-x-2 w-min bg-white rounded-md mx-auto mb-1 shadow-sm"
+    >
+      <button
+        class="cursor-pointer bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+        @click=${() => stopDebugging()}
+        title="Parar depuração"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 32 32"
+        >
+          <path
+            fill="currentColor"
+            d="M24 8v16H8V8zm0-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2"
+            stroke-width="1"
+            stroke="currentColor"
+          />
+        </svg>
+      </button>
       <button
         class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${n ===
         0
@@ -86,7 +109,19 @@ const openActionBar = (
         ?disabled=${n === 0}
         title="Passo anterior"
       >
-        Passo anterior
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 32 32"
+        >
+          <path
+            fill="currentColor"
+            d="M27 28a1 1 0 0 1-.5-.13l-19-11a1 1 0 0 1 0-1.74l19-11a1 1 0 0 1 1 0A1 1 0 0 1 28 5v22a1 1 0 0 1-1 1M10 16l16 9.27V6.73zM2 4h2v24H2z"
+            stroke-width="1"
+            stroke="currentColor"
+          />
+        </svg>
       </button>
       <button
         class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${n ===
@@ -99,7 +134,19 @@ const openActionBar = (
         ?disabled=${n === actions.length}
         title="Passo seguinte"
       >
-        Passo seguinte
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 32 32"
+        >
+          <path
+            fill="currentColor"
+            d="M5 28a1 1 0 0 1-1-1V5a1 1 0 0 1 .5-.87a1 1 0 0 1 1 0l19 11a1 1 0 0 1 0 1.74l-19 11A1 1 0 0 1 5 28M6 6.73v18.54L22 16zM28 4h2v24h-2z"
+            stroke-width="1"
+            stroke="currentColor"
+          />
+        </svg>
       </button>
     </div>
   `;
@@ -171,6 +218,8 @@ const tokenInputForm = new TokenInput({
 
       render(parsingStackTable.render(0), parsing);
 
+      debugging = true;
+
       // render debugging toolbar
       openActionBar(actions, parsingStackTable, n);
     }
@@ -201,6 +250,13 @@ const executeStack = (delay: number) => {
     }
   }, delay);
 };
+
+function stopDebugging() {
+  console.log('Debugging stopped');
+  debugging = false;
+  render('', actionBarEl);
+  render('', parsing);
+}
 
 function nextStep(
   actions: any[],
