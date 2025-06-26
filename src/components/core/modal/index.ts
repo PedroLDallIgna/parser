@@ -6,16 +6,19 @@ import {
 
 export class Modal {
   private _isOpen: boolean;
-  private _btnLabel: string;
+  private _btnLabel: string | TemplateResult;
+  private _btnTitle?: string;
   private _content: TemplateResult;
   private _element: HTMLElement;
 
   constructor({
     btnLabel = 'Open Modal',
+    btnTitle = 'Open Modal',
     content = html``,
     element,
   }: {
-    btnLabel: string;
+    btnLabel: string | TemplateResult;
+    btnTitle?: string;
     element: HTMLElement;
     content?: TemplateResult;
   }) {
@@ -23,6 +26,7 @@ export class Modal {
     this._content = content;
     this._element = element;
     this._btnLabel = btnLabel;
+    this._btnTitle = btnTitle;
   }
 
   render() {
@@ -81,7 +85,7 @@ export class Modal {
               >
                 <button
                   type="button"
-                  class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
+                  class="cursor-pointer inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
                   @click=${() => this.toggle()}
                 >
                   Fechar
@@ -97,8 +101,9 @@ export class Modal {
   private renderButton() {
     return html`
       <button
-        class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="bg-blue-500 cursor-pointer text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         @click=${() => this.toggle()}
+        title=${this._btnTitle || 'Open Modal'}
       >
         ${this._btnLabel}
       </button>

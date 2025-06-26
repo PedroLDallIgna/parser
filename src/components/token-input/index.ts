@@ -127,7 +127,7 @@ export class TokenInput {
           >
             <button
               @click=${() => this.onRun(this.delay)}
-              class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="cursor-pointer bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               title="Run without debugging"
             >
               <svg
@@ -146,7 +146,7 @@ export class TokenInput {
             </button>
             <button
               @click=${() => this.onDebug?.()}
-              class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="cursor-pointer bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +165,7 @@ export class TokenInput {
             <button
               @click=${() =>
                 this.handleRandomTokenByGrammar()}
-              class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="cursor-pointer bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               title="Token aleatório válido"
             >
               <svg
@@ -189,7 +189,7 @@ export class TokenInput {
             </button>
             <button
               @click=${() => this.handleRandomToken()}
-              class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="cursor-pointer bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               title="Token aleatório"
             >
               <svg
