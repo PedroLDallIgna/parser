@@ -21,6 +21,7 @@ import { GrammarTable } from './components/grammar-table';
 import { TokenInput } from './components/token-input';
 import { Modal } from './components/core/modal';
 import { TokenGenerator } from './components/token-generator';
+import { maskToken } from './utils/maskToken';
 
 console.log(grammar);
 
@@ -79,7 +80,7 @@ const openActionBar = (
           ? 'opacity-50 cursor-not-allowed disabled'
           : 'cursor-pointer'}"
         @click=${(e: any) => {
-          stepBackward(actions, parsingStackTable, n);
+          nextStep(actions, parsingStackTable, n);
         }}
         ?disabled=${n === 0}
       >
@@ -91,7 +92,7 @@ const openActionBar = (
           ? 'opacity-50 cursor-not-allowed disabled'
           : 'cursor-pointer'}"
         @click=${(e: any) => {
-          stepForward(actions, parsingStackTable, n);
+          previousStep(actions, parsingStackTable, n);
         }}
         ?disabled=${n === actions.length}
       >
@@ -121,6 +122,14 @@ const tokenInputForm = new TokenInput({
     console.log('Initial Stack:', stack);
 
     executeStack(delay);
+  },
+  mask: (value: string) => {
+    const maskedToken = maskToken(
+      value,
+      parsedGrammar.terminals
+    );
+    console.log('Masked Token:', maskedToken);
+    return maskedToken;
   },
   onInputChange: (value: string) => {
     entryToken = value;
@@ -182,7 +191,7 @@ const executeStack = (delay: number) => {
   }, delay);
 };
 
-function stepForward(
+function previousStep(
   actions: any[],
   parsingStackTable: ParsingStackTable,
   n: number
@@ -197,7 +206,7 @@ function stepForward(
   openActionBar(actions, parsingStackTable, n);
 }
 
-function stepBackward(
+function nextStep(
   actions: any[],
   parsingStackTable: ParsingStackTable,
   n: number

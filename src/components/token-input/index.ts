@@ -13,6 +13,7 @@ export class TokenInput {
   private onRun: (delay: number) => void;
   private onDebug?: () => void;
   private onInputChange: (value: string) => void;
+  private mask?: (value: string) => string;
   private extra?: any;
   private delayValueEl: ReturnType<
     typeof createRef<HTMLSpanElement>
@@ -27,6 +28,7 @@ export class TokenInput {
     onRun,
     onDebug,
     onInputChange,
+    mask,
     extra,
   }: {
     grammar: GrammarSchema;
@@ -35,12 +37,14 @@ export class TokenInput {
     onDebug?: () => void;
     onInputChange: (value: string) => void;
     extra?: any;
+    mask?: (value: string) => string;
   }) {
     this.grammar = grammar;
     this.token = token || '';
     this.onRun = onRun;
     this.onDebug = onDebug;
     this.onInputChange = onInputChange;
+    this.mask = mask;
     this.delayValueEl = createRef<HTMLSpanElement>();
     this.inputValueEl = createRef<HTMLInputElement>();
     this.extra = extra;
@@ -68,6 +72,13 @@ export class TokenInput {
     this.onInputChange(this.token);
   }
 
+  private handleInputChange(event: Event): void {
+    const { value } = event.target as HTMLInputElement;
+    this.token = this.mask?.(value) ?? value;
+    this.inputValueEl.value!.value = this.token;
+    this.onInputChange(this.token);
+  }
+
   render(): TemplateResult {
     return html`
       <div
@@ -83,7 +94,7 @@ export class TokenInput {
               class="form-input mt-1 block p-2 w-full h-14 mt-2 mb-2 rounded-md border-gray-300 bg-gray-100 shadow-sm border-solid border-gray-800 focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               placeholder=""
               @input=${(event: any) =>
-                this.onInputChange(event.target.value)}
+                this.handleInputChange(event)}
               .value=${this.token}
               ${ref(this.inputValueEl)}
             />
