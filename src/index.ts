@@ -22,6 +22,7 @@ import { TokenInput } from './components/token-input';
 import { Modal } from './components/core/modal';
 import { TokenGenerator } from './components/token-generator';
 import { maskToken } from './utils/maskToken';
+import { validateToken } from './utils/validateToken';
 
 console.log(grammar);
 
@@ -80,11 +81,12 @@ const openActionBar = (
           ? 'opacity-50 cursor-not-allowed disabled'
           : 'cursor-pointer'}"
         @click=${(e: any) => {
-          nextStep(actions, parsingStackTable, n);
+          previousStep(actions, parsingStackTable, n);
         }}
         ?disabled=${n === 0}
+        title="Passo anterior"
       >
-        Step back
+        Passo anterior
       </button>
       <button
         class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ${n ===
@@ -92,11 +94,12 @@ const openActionBar = (
           ? 'opacity-50 cursor-not-allowed disabled'
           : 'cursor-pointer'}"
         @click=${(e: any) => {
-          previousStep(actions, parsingStackTable, n);
+          nextStep(actions, parsingStackTable, n);
         }}
         ?disabled=${n === actions.length}
+        title="Passo seguinte"
       >
-        Step forward
+        Passo seguinte
       </button>
     </div>
   `;
@@ -108,20 +111,24 @@ const tokenInputForm = new TokenInput({
   grammar: parsedGrammar,
   token: entryToken,
   onRun: (delay) => {
-    entryQueue.clear();
-    stack.clear();
+    if (
+      validateToken(entryToken, parsedGrammar.terminals)
+    ) {
+      entryQueue.clear();
+      stack.clear();
 
-    for (const char of entryToken) {
-      entryQueue.enqueue(char);
+      for (const char of entryToken) {
+        entryQueue.enqueue(char);
+      }
+      entryQueue.enqueue('$');
+      console.log('Entry Queue:', entryQueue);
+
+      stack.push('$');
+      stack.push(grammar.startSymbol);
+      console.log('Initial Stack:', stack);
+
+      executeStack(delay);
     }
-    entryQueue.enqueue('$');
-    console.log('Entry Queue:', entryQueue);
-
-    stack.push('$');
-    stack.push(grammar.startSymbol);
-    console.log('Initial Stack:', stack);
-
-    executeStack(delay);
   },
   mask: (value: string) => {
     const maskedToken = maskToken(
@@ -136,33 +143,37 @@ const tokenInputForm = new TokenInput({
     console.log('Input changed:', entryToken);
   },
   onDebug: () => {
-    entryQueue.clear();
-    stack.clear();
+    if (
+      validateToken(entryToken, parsedGrammar.terminals)
+    ) {
+      entryQueue.clear();
+      stack.clear();
 
-    for (const char of entryToken) {
-      entryQueue.enqueue(char);
+      for (const char of entryToken) {
+        entryQueue.enqueue(char);
+      }
+      entryQueue.enqueue('$');
+      console.log('Entry Queue:', entryQueue);
+
+      stack.push('$');
+      stack.push(grammar.startSymbol);
+      console.log('Initial Stack:', stack);
+
+      let n = 0;
+      const actions = process(
+        stack,
+        entryQueue,
+        parsedGrammar
+      );
+      const parsingStackTable = new ParsingStackTable(
+        actions
+      );
+
+      render(parsingStackTable.render(0), parsing);
+
+      // render debugging toolbar
+      openActionBar(actions, parsingStackTable, n);
     }
-    entryQueue.enqueue('$');
-    console.log('Entry Queue:', entryQueue);
-
-    stack.push('$');
-    stack.push(grammar.startSymbol);
-    console.log('Initial Stack:', stack);
-
-    let n = 0;
-    const actions = process(
-      stack,
-      entryQueue,
-      parsedGrammar
-    );
-    const parsingStackTable = new ParsingStackTable(
-      actions
-    );
-
-    render(parsingStackTable.render(0), parsing);
-
-    // render debugging toolbar
-    openActionBar(actions, parsingStackTable, n);
   },
   extra: html`<div id="grammar"></div>`,
 });
@@ -191,7 +202,7 @@ const executeStack = (delay: number) => {
   }, delay);
 };
 
-function previousStep(
+function nextStep(
   actions: any[],
   parsingStackTable: ParsingStackTable,
   n: number
@@ -206,7 +217,7 @@ function previousStep(
   openActionBar(actions, parsingStackTable, n);
 }
 
-function nextStep(
+function previousStep(
   actions: any[],
   parsingStackTable: ParsingStackTable,
   n: number
