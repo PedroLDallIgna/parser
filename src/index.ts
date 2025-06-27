@@ -5,7 +5,12 @@ import { process } from './process';
 
 // data
 // import grammar from './grammar.json';
-import grammar from './grammars/grammar2.json';
+// import grammar from './grammars/grammar2.json';
+// import grammar from './grammars/grammar3.json';
+// import grammar from './grammars/grammar4.json';
+// import grammar from './grammars/grammar5.json';
+// import grammar from './grammars/grammar6.json';
+import grammar from './grammars/grammar7.json';
 
 // styles
 import './index.css';
@@ -23,8 +28,6 @@ import { Modal } from './components/core/modal';
 import { TokenGenerator } from './components/token-generator';
 import { maskToken } from './utils/maskToken';
 import { validateToken } from './utils/validateToken';
-
-import { drawTree } from './components/derivation-tree';
 
 const parsedGrammar = grammar as GrammarSchema;
 
