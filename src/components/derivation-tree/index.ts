@@ -1,9 +1,5 @@
 import * as d3 from 'd3';
-
-type Node = {
-  name: string;
-  children?: Node[];
-};
+import { Node } from '../../types/node';
 
 export function drawTree(treeData: Node) {
   const svg = d3.select('svg#derivation-tree');

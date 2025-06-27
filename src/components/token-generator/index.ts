@@ -6,11 +6,7 @@ import {
 import { GrammarSchema } from '../../types/grammar-schema';
 import Stack from '../../stack';
 import { drawTree } from '../derivation-tree';
-
-type Node = {
-  name: string;
-  children: Node[];
-};
+import { Node } from '../../types/node';
 
 export class TokenGenerator {
   private _grammar: GrammarSchema;
