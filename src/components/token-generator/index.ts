@@ -5,8 +5,6 @@ import {
 } from 'lit-html';
 import { GrammarSchema } from '../../types/grammar-schema';
 import Stack from '../../stack';
-import { Modal } from '../core/modal';
-import { createRef, ref } from 'lit-html/directives/ref.js';
 import { drawTree } from '../derivation-tree';
 
 type Node = {
@@ -27,17 +25,13 @@ export class TokenGenerator {
   private _derivationTree: Node;
   private _leftMostNode: Node;
   private _notExpandedNodes: Stack<Node>;
-  private extra?: string | TemplateResult;
-  private _extraContent: ReturnType<
-    typeof createRef<HTMLDivElement>
-  >;
+  private _treeHistory: string[] = [];
   private _isOpen: boolean = false;
 
   constructor({
     grammar,
     element,
     onGenerated,
-    extra,
   }: {
     grammar: GrammarSchema;
     element: HTMLElement;
@@ -56,9 +50,10 @@ export class TokenGenerator {
     };
     this._notExpandedNodes = new Stack<Node>();
     this._notExpandedNodes.push(this._derivationTree);
+    this._treeHistory.push(
+      JSON.stringify({ ...this._derivationTree })
+    );
     this._leftMostNode = this._notExpandedNodes.peek()!;
-    this.extra = extra;
-    this._extraContent = createRef<HTMLDivElement>();
   }
 
   private get leftMostNonTerminal(): string {
@@ -93,6 +88,9 @@ export class TokenGenerator {
     if (this._historyIndex > 0) {
       this._historyIndex--;
       this._derivation = this._history[this._historyIndex];
+      this._derivationTree = JSON.parse(
+        this._treeHistory[this._historyIndex]
+      ) as Node;
 
       this.render();
     }
@@ -102,14 +100,15 @@ export class TokenGenerator {
     if (this._historyIndex < this._history.length - 1) {
       this._historyIndex++;
       this._derivation = this._history[this._historyIndex];
+      this._derivationTree = JSON.parse(
+        this._treeHistory[this._historyIndex]
+      ) as Node;
 
       this.render();
     }
   }
 
   private expand(rule: string): void {
-    // console.log('Expanding rule:', rule);
-
     const index = this._derivation.indexOf(
       this.leftMostNonTerminal
     );
@@ -120,6 +119,8 @@ export class TokenGenerator {
         this._derivation.slice(0, index) +
         rule +
         this._derivation.slice(index + 1);
+
+      // TODO: update derivation tree on undo and redo actions
 
       const node: Node = {
         name: this._derivation[index],
@@ -142,18 +143,23 @@ export class TokenGenerator {
 
       this._leftMostNode = this._notExpandedNodes.peek()!;
 
-      console.log('derivation tree:', this._derivationTree);
-
       // Update history
       this._history = this._history.slice(
         0,
         this._historyIndex + 1
       );
       this._history.push(this._derivation);
+      this._treeHistory = this._treeHistory.slice(
+        0,
+        this._historyIndex + 1
+      );
+      this._treeHistory.push(
+        JSON.stringify({
+          ...this._derivationTree,
+        })
+      );
       this._historyIndex++;
     }
-
-    // console.log('Expanded token:', this._derivation);
 
     this.render();
 
@@ -162,7 +168,6 @@ export class TokenGenerator {
         this._derivation,
         this._derivationTree
       );
-      console.log(this._history);
     }
   }
 
@@ -287,7 +292,13 @@ export class TokenGenerator {
   private toggle() {
     this._isOpen = !this._isOpen;
     this.render();
-    if (this._isOpen) drawTree(this._derivationTree);
+
+    if (this._isOpen)
+      drawTree(
+        JSON.parse(
+          this._treeHistory[this._historyIndex]
+        ) as Node
+      );
   }
 
   private renderModal() {
@@ -318,7 +329,22 @@ export class TokenGenerator {
                 class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4"
               >
                 <div class="sm:flex sm:items-start">
-                  <svg id="derivation-tree"></svg>
+                  <div
+                    class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left"
+                  >
+                    <h3
+                      class="text-lg font-semibold text-gray-900"
+                      id="dialog-title"
+                    >
+                      Árvore de Derivação
+                    </h3>
+                    <div class="mt-2">
+                      <svg
+                        id="derivation-tree"
+                        class="mx-auto"
+                      ></svg>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div

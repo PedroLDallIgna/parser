@@ -26,8 +26,6 @@ import { validateToken } from './utils/validateToken';
 
 import { drawTree } from './components/derivation-tree';
 
-console.log(grammar);
-
 const parsedGrammar = grammar as GrammarSchema;
 
 const tokenInput = <HTMLInputElement>(
@@ -40,11 +38,6 @@ const parsing = <HTMLDivElement>(
   document.getElementById('parsing')!
 );
 
-// const entryToken = 'adcaa';
-// const entryToken = 'dbbbbc';
-// const entryToken = 'ccabbc';
-// const entryToken = 'acbbca';
-// const entryToken = 'acabbca';
 let entryToken = '';
 
 // type must be alphabet and $
@@ -52,23 +45,6 @@ const entryQueue = new Queue<string>();
 
 // type must be non terminals and $
 const stack = new Stack<string>();
-
-// validate token
-// verify token
-
-// for (const char of entryToken) {
-//   entryQueue.enqueue(char);
-// }
-// entryQueue.enqueue('$');
-// console.log('Entry Queue:', entryQueue);
-
-// stack.push('$');
-// stack.push(grammar.startSymbol);
-// console.log('Initial Stack:', stack);
-
-// const actions = process(stack, entryQueue, parsedGrammar);
-
-// console.log('Final actions:', actions);
 
 let debugging = false;
 
@@ -170,11 +146,11 @@ const tokenInputForm = new TokenInput({
         entryQueue.enqueue(char);
       }
       entryQueue.enqueue('$');
-      console.log('Entry Queue:', entryQueue);
+      // console.log('Entry Queue:', entryQueue);
 
       stack.push('$');
       stack.push(grammar.startSymbol);
-      console.log('Initial Stack:', stack);
+      // console.log('Initial Stack:', stack);
 
       executeStack(delay);
     }
@@ -184,12 +160,10 @@ const tokenInputForm = new TokenInput({
       value,
       parsedGrammar.terminals
     );
-    console.log('Masked Token:', maskedToken);
     return maskedToken;
   },
   onInputChange: (value: string) => {
     entryToken = value;
-    console.log('Input changed:', entryToken);
   },
   onDebug: () => {
     if (
@@ -202,11 +176,11 @@ const tokenInputForm = new TokenInput({
         entryQueue.enqueue(char);
       }
       entryQueue.enqueue('$');
-      console.log('Entry Queue:', entryQueue);
+      // console.log('Entry Queue:', entryQueue);
 
       stack.push('$');
       stack.push(grammar.startSymbol);
-      console.log('Initial Stack:', stack);
+      // console.log('Initial Stack:', stack);
 
       let n = 0;
       const actions = process(
@@ -254,7 +228,6 @@ const executeStack = (delay: number) => {
 };
 
 function stopDebugging() {
-  console.log('Debugging stopped');
   debugging = false;
   render('', actionBarEl);
   render('', parsing);
@@ -265,8 +238,6 @@ function nextStep(
   parsingStackTable: ParsingStackTable,
   n: number
 ) {
-  console.log('clicked');
-
   if (n < actions.length) {
     n++;
     render(parsingStackTable.render(n), parsing);
@@ -280,8 +251,6 @@ function previousStep(
   parsingStackTable: ParsingStackTable,
   n: number
 ) {
-  console.log('clicked');
-
   if (n > 0) {
     n--;
     render(parsingStackTable.render(n), parsing);
@@ -361,12 +330,6 @@ const tokenGeneratorEl = document.getElementById(
 const tokenGenerator = new TokenGenerator({
   element: tokenGeneratorEl,
   grammar: parsedGrammar,
-  onGenerated: (token, derivationTree) => {
-    console.log('Generated token:', token);
-    console.log('Derivation tree:', derivationTree);
-
-    drawTree(derivationTree!);
-  },
 });
 
 tokenGenerator.render();
