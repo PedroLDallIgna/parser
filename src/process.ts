@@ -41,15 +41,6 @@ export function process(
       break;
     }
 
-    if (currentToken === '$' && currentSymbol !== '$') {
-      step['action'] =
-        'Erro: a entrada está vazia mas a pilha não';
-      actions.push(step);
-      stack.clear();
-      entryQueue.clear();
-      break;
-    }
-
     if (
       grammar.terminals.includes(currentSymbol) &&
       grammar.terminals.includes(currentToken)
