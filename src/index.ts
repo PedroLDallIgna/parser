@@ -10,8 +10,8 @@ import { process } from './process';
 // import grammar from './grammars/grammar4.json';
 // import grammar from './grammars/grammar5.json';
 // import grammar from './grammars/grammar6.json';
-import grammar from './grammars/grammar7.json';
-// import grammar from './grammars/grammar8.json';
+// import grammar from './grammars/grammar7.json';
+import grammar from './grammars/grammar8.json';
 
 // styles
 import './index.css';
