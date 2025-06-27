@@ -12,6 +12,18 @@ function leftMostNonTerminal(
   return '';
 }
 
+function leftMostNonTerminalIndex(
+  derivation: string,
+  nonTerminals: string[]
+): number {
+  for (let i = 0; i < derivation.length; i++) {
+    if (nonTerminals.includes(derivation[i])) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 export function generateTokenByGrammarRules(
   grammar: GrammarSchema,
   startSymbol: string,
@@ -20,15 +32,36 @@ export function generateTokenByGrammarRules(
   let derivation = startSymbol;
 
   while (
-    leftMostNonTerminal(derivation, grammar.nonTerminals)
+    leftMostNonTerminalIndex(
+      derivation,
+      grammar.nonTerminals
+    ) >= 0
   ) {
+    const index = leftMostNonTerminalIndex(
+      derivation,
+      grammar.nonTerminals
+    );
+
     derivation = derivation.replace(
-      leftMostNonTerminal(derivation, grammar.nonTerminals),
+      derivation[index],
       (match) => {
         const rules = grammar.rules[match];
+
         if (!rules || rules.length === 0) {
           return derivation;
         }
+
+        if (derivation.length > 50) {
+          return '';
+        }
+
+        if (
+          derivation.length >= maxLength &&
+          rules.includes('ε')
+        ) {
+          return '';
+        }
+
         const randomRule =
           rules[Math.floor(Math.random() * rules.length)];
 
