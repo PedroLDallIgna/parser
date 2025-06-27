@@ -120,6 +120,8 @@ export class TokenGenerator {
 
       // TODO: update derivation tree on undo and redo actions
 
+      console.log('peek', this._notExpandedNodes.peek());
+
       const node: Node = {
         name: this._derivation[index],
         children: rule.split('').map((char) => ({
@@ -130,8 +132,7 @@ export class TokenGenerator {
 
       const auxNode: Node[] = node.children.filter(
         ({ name }) =>
-          this._grammar.nonTerminals.includes(name) ||
-          name === 'ε'
+          this._grammar.nonTerminals.includes(name)
       );
 
       this._leftMostNode.children = [...node.children];
