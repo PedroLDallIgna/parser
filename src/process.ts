@@ -77,18 +77,27 @@ export function process(
         const production =
           grammar.parsingTable[currentSymbol][currentToken];
 
-        step['action'] =
-          `Expande: ${currentSymbol} -> ${production}`;
-        actions.push(step);
+        if (!production) {
+          step['action'] =
+            'Erro: não há produção para o símbolo atual';
+          actions.push(step);
+          stack.clear();
+          entryQueue.clear();
+          break;
+        } else {
+          step['action'] =
+            `Expande: ${currentSymbol} -> ${production}`;
+          actions.push(step);
 
-        stack.pop();
-        if (production !== 'ε') {
-          const productionSymbols = production
-            .split('')
-            .reverse();
+          stack.pop();
+          if (production !== 'ε') {
+            const productionSymbols = production
+              .split('')
+              .reverse();
 
-          for (const symbol of productionSymbols) {
-            stack.push(symbol);
+            for (const symbol of productionSymbols) {
+              stack.push(symbol);
+            }
           }
         }
       }

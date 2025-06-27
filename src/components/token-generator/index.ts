@@ -50,6 +50,8 @@ export class TokenGenerator {
       JSON.stringify({ ...this._derivationTree })
     );
     this._leftMostNode = this._notExpandedNodes.peek()!;
+
+    // TODO: to track undo and redo actions, change to two stacks (undoStack and redoStack)
   }
 
   private get leftMostNonTerminal(): string {
@@ -109,7 +111,7 @@ export class TokenGenerator {
       this.leftMostNonTerminal
     );
     if (index !== -1) {
-      if (rule === 'ε') rule = '';
+      // if (rule === 'ε') rule = '';
 
       this._derivation =
         this._derivation.slice(0, index) +
@@ -120,24 +122,30 @@ export class TokenGenerator {
 
       const node: Node = {
         name: this._derivation[index],
-        children: rule
-          .split('')
-          .map((char) => ({ name: char, children: [] })),
+        children: rule.split('').map((char) => ({
+          name: char === '' ? 'ε' : char,
+          children: [],
+        })),
       };
 
       const auxNode: Node[] = node.children.filter(
         ({ name }) =>
-          this._grammar.nonTerminals.includes(name)
+          this._grammar.nonTerminals.includes(name) ||
+          name === 'ε'
       );
 
       this._leftMostNode.children = [...node.children];
       this._notExpandedNodes.pop();
+
+      console.log(this._derivationTree);
 
       for (const node of auxNode.reverse()) {
         this._notExpandedNodes.push(node);
       }
 
       this._leftMostNode = this._notExpandedNodes.peek()!;
+
+      this._derivation = this._derivation.replace('ε', '');
 
       // Update history
       this._history = this._history.slice(
@@ -236,7 +244,7 @@ export class TokenGenerator {
             <label class="font-bold text-lg inline-flex text-gray-800 space-x-2 items-center">
               <span>Derivação:</span>
               <div class="derivation-result inline-flex">
-                <input name="token" type="text" .value=${this._derivation} readonly class="derivation w-32 text-gray-600 bg-gray-200 py-1 px-2 rounded-l-sm focus:outline-none"/>
+                <input name="token" type="text" .value=${this._derivation} readonly class="derivation w-48 text-gray-600 bg-gray-200 py-1 px-2 rounded-l-sm focus:outline-none"/>
                 <button class="flex items-center copy-icon cursor-pointer py-1 px-2  bg-gray-300 rounded-r-sm hover:bg-gray-400 focus:outline" @click=${() => this.handleCopy()} ?disabled=${!!this.leftMostNonTerminal}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2" stroke-width="1" stroke="currentColor"/><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z" stroke-width="1" stroke="currentColor"/></svg>
                 </button>

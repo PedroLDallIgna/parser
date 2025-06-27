@@ -20,7 +20,6 @@ export function generateTokenByGrammarRules(
   let derivation = startSymbol;
 
   while (
-    derivation.length < maxLength &&
     leftMostNonTerminal(derivation, grammar.nonTerminals)
   ) {
     derivation = derivation.replace(
@@ -32,7 +31,8 @@ export function generateTokenByGrammarRules(
         }
         const randomRule =
           rules[Math.floor(Math.random() * rules.length)];
-        return randomRule;
+
+        return randomRule.replace('ε', '').trim();
       }
     );
   }
